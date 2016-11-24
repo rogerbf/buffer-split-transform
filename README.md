@@ -28,7 +28,7 @@ sink.on(`data`, console.log)
 { flushRemainingChunk: true }
 ```
 
-If `flushRemainingChunk` is set to false, the remainder of a split chunk will be omitted when the source stream ends. This can be useful if you are only interested in data which ends with the specified delimiter.
+If `flushRemainingChunk` is set to `false`, the remainder of a split chunk will be omitted when the source stream ends. This can be useful if you are only interested in data before specified delimiter.
 
 In cases where extra verbosity is desired, split can be called like so:
 
