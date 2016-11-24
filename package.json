@@ -1,7 +1,7 @@
 {
   "name": "buffer-split-transform",
-  "version": "0.0.1",
-  "description": "",
+  "version": "1.0.0",
+  "description": "creates a transform stream that splits chunks without intermediate string conversion",
   "main": "./distribution/index.js",
   "scripts": {
     "test": "tape -r babel-register ./source/**/*.test.js | tap-dot",
@@ -18,7 +18,14 @@
     "test:coverage": "nyc --reporter=lcov --require babel-register npm test && nyc report",
     "watch:test:coverage": "onchange \"source/*.js\" \"source/**/*.js\" -- npm run test:coverage"
   },
-  "keywords": [],
+  "keywords": [
+    "buffer",
+    "split",
+    "transform",
+    "stream",
+    "streams",
+    "transform stream"
+  ],
   "author": "rogerbf <roger@bergfalk.nu> (http://bergfalk.nu/)",
   "license": "MIT",
   "devDependencies": {
