@@ -114,7 +114,7 @@ test(`expected chunks, custom delimiter, no flush`, assert => {
 
   let dataEvents = 0
 
-  const output = testdata.pipe(split(Buffer.from(`a`), false))
+  const output = testdata.pipe(split(Buffer.from(`a`), { flushRemainingChunk: false }))
 
   output.on(`data`, data => {
     dataEvents = dataEvents + 1
@@ -194,39 +194,6 @@ test(`expected chunks, custom delimiter (number)`, assert => {
   assert.end()
 })
 
-test(`expected chunks, custom delimiter, no flush (mix)`, assert => {
-  const testdata = createTestStream([
-    Buffer.from(`hello there `),
-    Buffer.from(`this is\na `),
-    Buffer.from(`fancy\n`),
-    Buffer.from(`stream`)
-  ])
-
-  const expected = {
-    dataEvents: 3,
-    data: [
-      Buffer.from(`hello there this is\n`),
-      Buffer.from(` f`),
-      Buffer.from(`ncy\nstre`)
-    ]
-  }
-
-  let dataEvents = 0
-
-  const output = testdata.pipe(split(Buffer.from(`a`), { flushRemainingChunk: false }))
-
-  output.on(`data`, data => {
-    dataEvents = dataEvents + 1
-    assert.equal(data.toString(), expected.data[dataEvents - 1].toString())
-  })
-
-  output.on(`end`, () => {
-    assert.equal(dataEvents, expected.dataEvents)
-  })
-
-  assert.end()
-})
-
 test(`expected chunks, custom delimiter, no flush (options object)`, assert => {
   const testdata = createTestStream([
     Buffer.from(`hello there `),
@@ -291,8 +258,9 @@ test(`expected chunks, default delimiter, no flush`, assert => {
 })
 
 test(`throws`, assert => {
-  assert.throws(split.bind(null, []))
-  assert.throws(split.bind(null, null))
-  assert.throws(split.bind(null, undefined))
+  assert.throws(split.bind(null, []), /TypeError: could not parse argument, try Buffer\.from()?/)
+  assert.throws(split.bind(null, null), /TypeError: could not parse argument, try Buffer\.from()?/)
+  assert.throws(split.bind(null, undefined), /TypeError: could not parse argument, try Buffer\.from()?/)
+  assert.throws(split.bind(null, false), /TypeError: could not parse argument, try Buffer\.from()?/)
   assert.end()
 })

@@ -2,25 +2,38 @@ import { Transform } from 'stream'
 import split from 'recursive-buffer-split'
 
 export default (...args) => {
-  const config = Object.assign(
+  const { delimiter, flushRemainingChunk } = Object.assign(
     {
       delimiter: Buffer.from(`\n`),
       flushRemainingChunk: true
     },
     args.reduce((config, arg) => {
-      const type = arg.constructor.name
+      let type
+      try {
+        type = arg.constructor.name
+      } catch (e) {
+        throw new TypeError(
+          `could not parse argument, try Buffer.from()?`
+        )
+      }
       if (type === `Buffer` || type === `String` || type === `Number`) {
-        return { ...config, delimiter: arg }
-      } else if (type === `Boolean`) {
-        return { ...config, flushRemainingChunk: arg }
+        return { ...config, delimiter: Buffer.from(arg.toString()) }
       } else if (type === `Object`) {
-        return { ...config, ...arg }
-      } else throw new Error(`could not parse arguments`)
+        return {
+          ...config,
+          ...Object.keys(arg).reduce((acc, k) => {
+            if (k === `delimiter`) {
+              return { ...acc, delimiter: Buffer.from(arg[k].toString()) }
+            } else {
+              return { ...acc, [k]: arg[k] }
+            }
+          }, {})
+        }
+      } else {
+        throw new TypeError(`could not parse argument, try Buffer.from()?`)
+      }
     }, {})
   )
-
-  const delimiter = Buffer.from(config.delimiter.toString())
-  const flushRemainingChunk = config.flushRemainingChunk
 
   return Object.assign(
     new Transform({
@@ -28,7 +41,6 @@ export default (...args) => {
         const chunks = split(
           delimiter, Buffer.concat([ this.remaining, chunk ])
         )
-
         const lastChunk = chunks.slice(-1)[0]
 
         if (lastChunk.length === 0) {
@@ -42,14 +54,10 @@ export default (...args) => {
         next()
       },
       flush (next) {
-        if (flushRemainingChunk) {
-          this.push(this.remaining)
-        }
+        if (flushRemainingChunk) { this.push(this.remaining) }
         next()
       }
     }),
-    {
-      remaining: Buffer.alloc(0)
-    }
+    { remaining: Buffer.alloc(0) }
   )
 }
