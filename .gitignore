@@ -1,0 +1,8 @@
+node_modules
+distribution
+.DS_Store
+package
+buffer-split-transform*.tgz
+npm-debug.log
+.nyc_output
+coverage
