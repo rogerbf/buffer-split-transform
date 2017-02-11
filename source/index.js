@@ -1,4 +1,4 @@
-import { Transform } from 'stream'
+import { Transform } from 'readable-stream'
 import split from 'recursive-buffer-split'
 
 export default (...args) => {

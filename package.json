@@ -1,6 +1,6 @@
 {
   "name": "buffer-split-transform",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "creates a transform stream that splits chunks without intermediate string conversion",
   "main": "./distribution/index.js",
   "scripts": {
@@ -50,6 +50,7 @@
     "README.md"
   ],
   "dependencies": {
+    "readable-stream": "^2.2.2",
     "recursive-buffer-split": "^1.0.1"
   },
   "repository": {
